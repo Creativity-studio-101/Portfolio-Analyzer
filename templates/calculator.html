@@ -1,0 +1,218 @@
+{% extends "layout.html" %}
+
+{% block title %}Portfolio Analyzer - Portfolio Analyzer{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Introduction Carousel -->
+    <div id="introCarousel" class="carousel slide mb-5" data-bs-ride="false">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#introCarousel" data-bs-slide-to="0" class="active"></button>
+            <button type="button" data-bs-target="#introCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#introCarousel" data-bs-slide-to="2"></button>
+        </div>
+        
+        <div class="carousel-inner bg-gradient-primary text-white rounded shadow">
+            <div class="carousel-item active">
+                <div class="p-5 text-center" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
+                    <i class="fas fa-chart-line fa-4x mb-4 text-white"></i>
+                    <h2 class="fw-bold mb-3">Welcome to Portfolio Analyzer</h2>
+                    <p class="lead fs-5 mx-auto" style="max-width: 600px; line-height: 1.6;">
+                        Analyze your investment portfolio with real-time data and comprehensive insights. 
+                        Track performance across stocks, cryptocurrency, and mutual funds.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="carousel-item">
+                <div class="p-5 text-center" style="min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
+                    <i class="fas fa-plus-circle fa-4x mb-4 text-white"></i>
+                    <h2 class="fw-bold mb-3">Add Your Portfolio</h2>
+                    <p class="lead">
+                        You can add your investments in two ways: manually enter each trade or 
+                        upload a CSV file with your complete portfolio data.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="carousel-item">
+                <div class="p-5 text-center">
+                    <i class="fas fa-chart-pie fa-4x mb-4"></i>
+                    <h2>Get Detailed Reports</h2>
+                    <p class="lead">
+                        Generate comprehensive reports with profit/loss analysis, asset allocation charts, 
+                        and performance metrics to make informed investment decisions.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="carousel-controls d-flex justify-content-center mt-3">
+            <button class="btn btn-outline-primary me-2" type="button" data-bs-target="#introCarousel" data-bs-slide="prev">
+                <i class="fas fa-arrow-left me-1"></i>Previous
+            </button>
+            <button class="btn btn-primary me-2" type="button" data-bs-target="#introCarousel" data-bs-slide="next">
+                Next <i class="fas fa-arrow-right ms-1"></i>
+            </button>
+            <button class="btn btn-outline-light" onclick="skipIntro()">
+                Skip <i class="fas fa-forward ms-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Action Buttons -->
+    <div id="mainActions" class="row justify-content-center" style="display: none;">
+        <div class="col-lg-8">
+            <h2 class="text-center mb-5">Choose How to Add Your Portfolio</h2>
+            
+            <div class="row">
+                <!-- Upload CSV -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow action-card">
+                        <div class="card-body text-center p-5">
+                            <div class="action-icon bg-primary text-white rounded-circle mx-auto mb-4">
+                                <i class="fas fa-upload fa-2x"></i>
+                            </div>
+                            <h4 class="card-title">Upload CSV File</h4>
+                            <p class="card-text text-muted">
+                                Upload your existing portfolio data using a CSV file. 
+                                We provide templates for stocks, crypto, and mutual funds.
+                            </p>
+                            <a href="{{ url_for('upload_csv') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-file-csv me-2"></i>Upload CSV
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Manually -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow action-card">
+                        <div class="card-body text-center p-5">
+                            <div class="action-icon bg-success text-white rounded-circle mx-auto mb-4">
+                                <i class="fas fa-plus fa-2x"></i>
+                            </div>
+                            <h4 class="card-title">Add Trades Manually</h4>
+                            <p class="card-text text-muted">
+                                Add your trades one by one using our simple form. 
+                                Perfect for tracking new investments or small portfolios.
+                            </p>
+                            <a href="{{ url_for('add_trades') }}" class="btn btn-success btn-lg">
+                                <i class="fas fa-edit me-2"></i>Add Manually
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Options -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-lightbulb text-warning me-2"></i>Quick Tips
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="small mb-2">
+                                        <strong>CSV Upload:</strong> Best for importing existing portfolios from brokers or spreadsheets.
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="small mb-2">
+                                        <strong>Manual Entry:</strong> Ideal for real-time tracking and adding new trades.
+                                    </p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="small mb-2">
+                                        <strong>Mix Both:</strong> You can use both methods - upload a base portfolio and add new trades manually.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Current Portfolio Status -->
+            {% if session.trades %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="fas fa-check-circle me-2"></i>Current Portfolio Status
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">
+                                You have <strong>{{ session.trades|length }}</strong> trades in your current portfolio.
+                            </p>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ url_for('report') }}" class="btn btn-success">
+                                    <i class="fas fa-chart-bar me-2"></i>View Report
+                                </a>
+                                <a href="{{ url_for('add_trades') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-plus me-2"></i>Add More Trades
+                                </a>
+                                <a href="{{ url_for('clear_portfolio') }}" class="btn btn-outline-danger" 
+                                   onclick="return confirm('Are you sure you want to clear your portfolio?')">
+                                    <i class="fas fa-trash me-2"></i>Clear Portfolio
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function skipIntro() {
+    document.getElementById('introCarousel').style.display = 'none';
+    document.getElementById('mainActions').style.display = 'block';
+}
+
+// Auto-show main actions after carousel completes or after 10 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.getElementById('introCarousel');
+    
+    // Show main actions when carousel reaches the last slide
+    carousel.addEventListener('slid.bs.carousel', function(e) {
+        if (e.to === 2) { // Last slide (0-indexed)
+            setTimeout(() => {
+                skipIntro();
+            }, 3000);
+        }
+    });
+
+    // Auto-skip after 15 seconds
+    setTimeout(() => {
+        if (document.getElementById('introCarousel').style.display !== 'none') {
+            skipIntro();
+        }
+    }, 15000);
+});
+
+// Action card hover effects
+document.addEventListener('DOMContentLoaded', function() {
+    const actionCards = document.querySelectorAll('.action-card');
+    
+    actionCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.transition = 'transform 0.3s ease';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}
